@@ -16,6 +16,15 @@ Built for an Obsidian Bases reading tracker: one note per book in `Books/`, fron
 
 `rating`, `media`, `genre` (once set), `owned`, `recommended_by`, `source` (once set), note body. Dates are filled only when blank. Status never moves from Finished or DNF, and is never set to To-Read.
 
+## Network use and accounts
+
+This plugin makes network requests to:
+
+- **Your Audiobookshelf server** (URL you configure), to read your listening progress and book metadata. Requires an Audiobookshelf account and API token.
+- **Hardcover** (`api.hardcover.app`), only when you run an enrich command or enable enrich after sync. Sends the book title and author as a search query. Requires a free Hardcover account and API token.
+
+No other data leaves your device. No telemetry.
+
 ## Install
 
 ### BRAT (recommended, works on mobile)

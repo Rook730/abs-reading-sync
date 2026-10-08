@@ -82,6 +82,7 @@ const blank = (v: unknown) => v === undefined || v === null || v === "" || (Arra
 export default class ABSReadingSync extends Plugin {
 	settings!: ABSSettings;
 	private timer: number | null = null;
+	private kickoff: number | null = null;
 	private running = false;
 
 	async onload() {
@@ -110,14 +111,17 @@ export default class ABSReadingSync extends Plugin {
 	get autoOnThisDevice(): boolean { return this.app.loadLocalStorage(LS_AUTO) === "1"; }
 	set autoOnThisDevice(v: boolean) { this.app.saveLocalStorage(LS_AUTO, v ? "1" : null); this.schedule(); }
 
-	clearTimer() { if (this.timer !== null) { window.clearInterval(this.timer); this.timer = null; } }
+	clearTimer() {
+		if (this.timer !== null) { window.clearInterval(this.timer); this.timer = null; }
+		if (this.kickoff !== null) { window.clearTimeout(this.kickoff); this.kickoff = null; }
+	}
 
 	schedule() {
 		this.clearTimer();
 		if (!this.autoOnThisDevice || this.settings.intervalMinutes <= 0) return;
 		this.timer = window.setInterval(() => this.sync(false, true), this.settings.intervalMinutes * 60_000);
 		this.registerInterval(this.timer);
-		window.setTimeout(() => this.sync(false, true), 10_000);
+		this.kickoff = window.setTimeout(() => { this.kickoff = null; this.sync(false, true); }, 10_000);
 	}
 
 	async saveSettings() { await this.saveData(this.settings); this.schedule(); }
@@ -368,10 +372,8 @@ export default class ABSReadingSync extends Plugin {
 		}
 		lines.push("", `## Not found (${misses.length})`, "", ...misses.map(m => `- ${m}`), "");
 		if (errors.length) lines.push("## Errors", "", ...errors.map(e => `- ${e}`), "");
+		await this.writeNote("Hardcover Enrich Preview.md", lines.join("\n"));
 		const path = "Hardcover Enrich Preview.md";
-		const existing = this.app.vault.getAbstractFileByPath(path);
-		if (existing instanceof TFile) await this.app.vault.modify(existing, lines.join("\n"));
-		else await this.app.vault.create(path, lines.join("\n"));
 		await this.app.workspace.openLinkText(path, "", true);
 	}
 
@@ -406,6 +408,12 @@ export default class ABSReadingSync extends Plugin {
 		return this.app.vault.create(target, body);
 	}
 
+	private async writeNote(path: string, content: string) {
+		const existing = this.app.vault.getFileByPath(normalizePath(path));
+		if (existing) await this.app.vault.process(existing, () => content);
+		else await this.app.vault.create(normalizePath(path), content);
+	}
+
 	async applyTemplateFields() {
 		const tpl = this.app.vault.getAbstractFileByPath(normalizePath(this.settings.templatePath));
 		if (!(tpl instanceof TFile)) { new Notice(`Template not found: ${this.settings.templatePath}`); return; }
@@ -437,10 +445,8 @@ export default class ABSReadingSync extends Plugin {
 			lines.push("");
 		}
 		if (errors.length) lines.push("## Errors", "", ...errors.map(e => `- ${e}`), "");
+		await this.writeNote("ABS Sync Preview.md", lines.join("\n"));
 		const path = "ABS Sync Preview.md";
-		const existing = this.app.vault.getAbstractFileByPath(path);
-		if (existing instanceof TFile) await this.app.vault.modify(existing, lines.join("\n"));
-		else await this.app.vault.create(path, lines.join("\n"));
 		await this.app.workspace.openLinkText(path, "", true);
 	}
 }

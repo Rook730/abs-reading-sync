@@ -2,8 +2,9 @@
   "id": "abs-reading-sync",
   "name": "Audiobookshelf Reading Sync",
   "version": "0.3.0",
-  "minAppVersion": "1.4.10",
-  "description": "Sync listening progress and finished books from an Audiobookshelf server into book notes.",
-  "author": "Nick",
+  "minAppVersion": "1.8.7",
+  "description": "Sync listening progress from an Audiobookshelf server into book notes and fill missing metadata from Hardcover.",
+  "author": "Rook730",
+  "authorUrl": "https://github.com/Rook730"
   "isDesktopOnly": false
 }
