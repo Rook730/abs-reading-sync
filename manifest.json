@@ -1,0 +1,9 @@
+{
+  "id": "abs-reading-sync",
+  "name": "Audiobookshelf Reading Sync",
+  "version": "0.3.0",
+  "minAppVersion": "1.4.10",
+  "description": "Sync listening progress and finished books from an Audiobookshelf server into book notes.",
+  "author": "Nick",
+  "isDesktopOnly": false
+}

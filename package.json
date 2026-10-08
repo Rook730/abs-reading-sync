@@ -1,0 +1,16 @@
+{
+  "name": "abs-reading-sync",
+  "version": "0.3.0",
+  "description": "Obsidian plugin: sync Audiobookshelf listening progress into book notes and enrich them from Hardcover.",
+  "main": "main.js",
+  "scripts": {
+    "build": "tsc -noEmit && esbuild main.ts --bundle --format=cjs --platform=browser --target=es2018 --external:obsidian --outfile=main.js",
+    "dev": "esbuild main.ts --bundle --format=cjs --platform=browser --target=es2018 --external:obsidian --outfile=main.js --watch"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "obsidian": "^1.13.1",
+    "typescript": "^7.0.2"
+  }
+}

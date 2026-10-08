@@ -1,0 +1,88 @@
+filters:
+  and:
+    - file.inFolder("Books")
+    - file.ext == "md"
+properties:
+  file.name:
+    displayName: Title
+  author:
+    displayName: Author
+  series:
+    displayName: Series
+  series_index:
+    displayName: "#"
+  status:
+    displayName: Status
+  media:
+    displayName: Media
+  narrator:
+    displayName: Narrator
+  genre:
+    displayName: Genre
+  published:
+    displayName: Published
+  pages:
+    displayName: Pages
+  length:
+    displayName: Hours
+  started:
+    displayName: Started
+  finished:
+    displayName: Finished
+  rating:
+    displayName: Rating
+  source:
+    displayName: Source
+  owned:
+    displayName: Owned
+  recommended_by:
+    displayName: Recommended By
+  progress:
+    displayName: Progress %
+views:
+  - type: kanban
+    name: Board
+    groupBy:
+      property: note.status
+      direction: ASC
+    groupOrder:
+      - To-Read
+      - Reading
+      - Finished
+      - DNF
+    order: [file.name, author]
+  - type: table
+    name: To-Read
+    filters:
+      and:
+        - 'status == "To-Read"'
+    order: [file.name, author, series, series_index, genre, media, recommended_by, owned]
+    sort:
+      - property: author
+        direction: ASC
+  - type: table
+    name: Reading
+    filters:
+      and:
+        - 'status == "Reading"'
+    order: [file.name, author, series, series_index, media, progress, started]
+    sort:
+      - property: progress
+        direction: DESC
+  - type: table
+    name: Finished
+    filters:
+      and:
+        - 'status == "Finished"'
+    order: [file.name, author, series, series_index, media, finished, rating]
+    sort:
+      - property: finished
+        direction: DESC
+    summaries:
+      rating: Average
+  - type: table
+    name: All
+    groupBy:
+      property: note.status
+      direction: ASC
+    order: [file.name, author, series, series_index, status, media, finished, rating]
